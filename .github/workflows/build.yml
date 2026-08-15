@@ -13,16 +13,10 @@ jobs:
         with:
           flutter-version: '3.22.2'
           channel: 'stable'
-      - name: Fix and Build
-        run: |
-          rm -rf android
-          flutter create. --platforms=android --overwrite
-          printf "name: navitronx\ndescription: NavitronX\npublish_to: 'none'\nversion: 11.0.0+1\nenvironment:\n sdk: '>=3.2.0 <4.0.0'\ndependencies:\n flutter:\n sdk: flutter\nflutter:\n uses-material-design: true\n" > pubspec.yaml
-          mkdir -p lib
-          printf "import 'package:flutter/material.dart';\nvoid main()=>runApp(MaterialApp(home:Scaffold(appBar:AppBar(title:Text('NavitronX v11 FINAL')),body:Center(child:Text('NavitronX v11\nMAP 22x\nGPS Galileo\nAI Chat\nMarket',textAlign:TextAlign.center,style:TextStyle(fontSize:24))))));\n" > lib/main.dart
-          flutter pub get
-          flutter build apk --release --no-tree-shake-icons
+      - run: flutter create. --platforms=android --overwrite
+      - run: flutter pub get
+      - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
-          name: NavitronX-APK-FINAL
+          name: NavitronX-APK
           path: build/app/outputs/flutter-apk/app-release.apk
