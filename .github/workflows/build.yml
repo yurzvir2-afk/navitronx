@@ -4,42 +4,44 @@ on:
   push:
     branches:
       - main
-      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Завантаження репозиторію
+      # 1. Checkout
       - uses: actions/checkout@v4
 
-      # 2. Java для Android SDK
+      # 2. Install Java (required for Android)
       - uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: '17'
 
-      # 3. Flutter
+      # 3. Install Flutter
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.2'
           channel: 'stable'
 
-      # 4. Перевірка середовища
-      - run: flutter doctor
+      # 4. Install Linux dependencies (important!)
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
 
-      # 5. Якщо проєкт уже існує — НЕ створюємо заново
-      # Якщо хочеш створювати — розкоментуй наступний рядок:
-      # - run: flutter create . --platforms=android --overwrite
+      # 5. Check Flutter environment
+      - run: flutter doctor -v
 
-      # 6. Залежності
+      # 6. Get dependencies
       - run: flutter pub get
 
-      # 7. Побудова APK
-      - run: flutter build apk --release
+      # 7. Build APK
+      - name: Build release APK
+        run: flutter build apk --release
 
-      # 8. Завантаження артефакту
+      # 8. Upload artifact
       - uses: actions/upload-artifact@v4
         with:
           name: NavitronX-APK
