@@ -13,9 +13,11 @@ jobs:
         with:
           flutter-version: '3.22.2'
           channel: 'stable'
-      - run: flutter create. --platforms=android --project-name navitronx
+      - run: flutter create --platforms=android --project-name navitronx temp_app
+      - run: cp -r temp_app/android./
+      - run: rm -rf temp_app
       - run: flutter pub get
-      - run: flutter build apk --release --no-tree-shake-icons
+      - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
           name: NavitronX-APK-FINAL
