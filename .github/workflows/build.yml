@@ -1,21 +1,45 @@
 name: Build NavitronX APK
-on: [push]
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
+      # 1. Завантаження репозиторію
       - uses: actions/checkout@v4
+
+      # 2. Java для Android SDK
       - uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: '17'
+
+      # 3. Flutter
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.2'
           channel: 'stable'
-      - run: flutter create. --platforms=android --overwrite
+
+      # 4. Перевірка середовища
+      - run: flutter doctor
+
+      # 5. Якщо проєкт уже існує — НЕ створюємо заново
+      # Якщо хочеш створювати — розкоментуй наступний рядок:
+      # - run: flutter create . --platforms=android --overwrite
+
+      # 6. Залежності
       - run: flutter pub get
+
+      # 7. Побудова APK
       - run: flutter build apk --release
+
+      # 8. Завантаження артефакту
       - uses: actions/upload-artifact@v4
         with:
           name: NavitronX-APK
